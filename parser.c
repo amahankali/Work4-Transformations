@@ -10,7 +10,7 @@
 #include "parser.h"
 
 #define NEXTDOUBLE(line) atof(strsep(&line, " ")) //next double in a line
-#define REMOVENL(line) if(line[strlen(line) - 1] == '\n') line[strlen(line) - 1] = '\0' //removes new line in a string read from fgets
+#define REMOVENL(line) if(strlen(line) != 0 && line[strlen(line) - 1] == '\n') line[strlen(line) - 1] = '\0' //removes new line in a string read from fgets
 
 
 /*======== void parse_file () ==========
@@ -72,6 +72,7 @@ void parse_file ( char * filename,
 
     if(strcmp(line, "line") == 0)
     {
+      printf("Reading line\n");
       //read coordinates
       fgets(line, 255, f); REMOVENL(line);
       //**************************
@@ -83,14 +84,17 @@ void parse_file ( char * filename,
       double x1 = NEXTDOUBLE(coords);
       double y1 = NEXTDOUBLE(coords);
       double z1 = NEXTDOUBLE(coords);
+      printf("Line: %f %f %f %f %f %f\n", x0, y0, z0, x1, y1, z1);
       add_edge(edges, x0, y0, z0, x1, y1, z1);
     }
     else if(strcmp(line, "ident") == 0)
     {
+      printf("Identity\n");
       ident(transform);
     }
     else if(strcmp(line, "scale") == 0)
     {
+      printf("Scaling\n");
       //read scale factors
       fgets(line, 255, f); REMOVENL(line);
       //**************************
@@ -99,6 +103,7 @@ void parse_file ( char * filename,
       double sy = NEXTDOUBLE(factors);
       double sz = NEXTDOUBLE(factors);
 
+      printf("Scale Factors: %f %f %f\n", sx, sy, sz);
       //makes scale matrix and multiply
       struct matrix* scaleMat = make_scale(sx, sy, sz);
       matrix_mult(scaleMat, transform);
@@ -106,13 +111,15 @@ void parse_file ( char * filename,
     }
     else if(strcmp(line, "move") == 0)
     {
+      printf("Moving\n");
       fgets(line, 255, f); REMOVENL(line);
       //**************************
       char* factors = line;
-      double tx = NEXTDOUBLE(factors);
-      double ty = NEXTDOUBLE(factors);
-      double tz = NEXTDOUBLE(factors);
+      double tx = NEXTDOUBLE(factors); printf("tx: %f\nRemaining String: %s\n", tx, factors);
+      double ty = NEXTDOUBLE(factors); printf("ty: %f\nRemaining String: %s\n", ty, factors);
+      double tz = NEXTDOUBLE(factors); printf("tz: %f\nRemaining String: %s\n", tz, factors);
 
+      printf("Moving by: %f %f %f\n", tx, ty, tz);
       //make trans matrix and multiply
       struct matrix* transMat = make_translate(tx, ty, tz);
       matrix_mult(transMat, transform);
@@ -120,12 +127,15 @@ void parse_file ( char * filename,
     }
     else if(strcmp(line, "rotate") == 0)
     {
+      printf("Rotating\n");
       fgets(line, 255, f); REMOVENL(line);
       //**************************
       char* rotateArgs = line;
 
       char rotType = *(strsep(&rotateArgs, " "));
       double degreeMeasure = NEXTDOUBLE(rotateArgs);
+
+      printf("Rotation type: %c %f\n", rotType, degreeMeasure);
 
       struct matrix* m;
       if(rotType == 'x') m = make_rotX(degreeMeasure);
@@ -137,16 +147,25 @@ void parse_file ( char * filename,
     }
     else if(strcmp(line, "apply") == 0)
     {
+      printf("Applying\n");
       matrix_mult(transform, edges);
+    }
+    else if(strcmp(line, "draw") == 0) //plots to the screen, but without displaying
+    {
+      printf("Drawing\n");
+      color c; c.red = 255; c.green = 0; c.blue = 0;
+      draw_lines(edges, s, c);
     }
     else if(strcmp(line, "display") == 0)
     {
+      printf("Displaying\n");
       color c; c.red = 255; c.green = 0; c.blue = 0;
       draw_lines(edges, s, c);
       display(s);
     }
     else if(strcmp(line, "save") == 0)
     {
+      printf("Saving\n");
       //read argument, file name
       fgets(line, 255, f); REMOVENL(line);
       char* pictureFile = line;
