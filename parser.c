@@ -61,7 +61,7 @@ void parse_file ( char * filename,
                   screen s) {
   
   FILE *f;
-  char line[256]; line[256] = '\0';
+  char line[256];
   clear_screen(s);
 
   if(strcmp(filename, "stdin") == 0) f = stdin;
