@@ -3,7 +3,7 @@
 #include <math.h>
 
 #include "matrix.h"
-#define RTOD 360.0 / (2 * M_PI);
+#define DTOR (2 * M_PI) / 360.0;
 
 
 /*======== struct matrix * make_translate() ==========
@@ -62,7 +62,7 @@ Returns: The rotation matrix created using theta as the
 angle of rotation and X as the axis of rotation.
 ====================*/
 struct matrix * make_rotX(double theta) {
-  theta *= RTOD;
+  theta *= DTOR;
 
   struct matrix* m = new_matrix(4, 4);
   m->lastcol = 4;
@@ -89,7 +89,7 @@ Returns: The rotation matrix created using theta as the
 angle of rotation and Y as the axis of rotation.
 ====================*/
 struct matrix * make_rotY(double theta) {
-  theta *= RTOD;
+  theta *= DTOR;
 
   struct matrix* m = new_matrix(4, 4);
   m->lastcol = 4;
@@ -116,7 +116,7 @@ Returns: The rotation matrix created using theta as the
 angle of rotation and Z as the axis of rotation.
 ====================*/
 struct matrix * make_rotZ(double theta) {
-  theta *= RTOD;
+  theta *= DTOR;
 
   struct matrix* m = new_matrix(4, 4);
   m->lastcol = 4;
